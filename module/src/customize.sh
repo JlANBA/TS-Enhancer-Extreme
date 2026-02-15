@@ -344,6 +344,31 @@ elif [ $APPDETECTED -eq 0 ]; then
   print_cn "- 未发现冲突软件"
   print_en "- No conflict software found"
 fi
+
+
+ui_print "================================="
+ui_print " "
+ui_print "================================="
+ui_print "音量+ : 跳转加入"
+ui_print "音量- : 结束安装"
+ui_print "================================="
+
+chooseport
+
+if [ "$PORT" = "1" ]; then
+ui_print "- 你选择了 音量+"
+
+am start -a android.intent.action.VIEW -d "
+https://qun.qq.com/universal-share/share?ac=1&authKey=PzIQnVRUd0IKXoZ2saueBhYo0XtLiEtZcZxVKUhQtMSlPlpBuOpOeAPlSdZvD6w4&busi_data=eyJncm91cENvZGUiOiIyMzgzMjA1NDgiLCJ0b2tlbiI6ImpiQ0FyaDA5TzJ2eXBmRkM5dWtmMHE5Uk1uODBjM0NYeFFsaTdOb2Q5Wkg3cGpIZVhRUjZtVWRyR05ITTlDNXoiLCJ1aW4iOiIzMTQzMTc1MTg3In0%3D&data=sSTrfVRTjnthkVIMQ76ol8Urrj-ZPT_-L4gl444IYnrsvtghI9NNJ6BPDUQ4mK3tVZv3bhT0WW3Kt8jWPI3bBg&svctype=4&tempid=h5_group_info
+"
+
+ui_print "- 已尝试打开群链接"
+exit 0
+fi
+
+if [ "$PORT" = "0" ]; then
+ui_print "- 你选择了 音量-"
+ui_print "- 结束安装"
 ##END##
 
 print_cn "- 安装完毕"

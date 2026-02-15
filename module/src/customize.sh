@@ -394,7 +394,7 @@ elif [ "$ACTION" -eq 2 ]; then
 
 else
   ui_print "***********************************************"
-  print_cn "- 选择超时：自动拒绝并继续安装"
+  print_cn "- 选择超时：自动拒绝并结束安装"
   print_en "- Timeout: Auto-rejected and continuing"
   ui_print "***********************************************"
 fi

@@ -347,22 +347,27 @@ fi
 
 choose_logic() {
   ui_print "***********************************************"
-  print_cn "- 正在等待按键选择..."
-  print_en "- Waiting for key press..."
-  print_cn "  [音量+] : 广告：是否加入我们新的MC生电服？"
-  print_en "  [音量+] : Join RustWorld QQ Group?"
-  print_cn "  [音量-] : 不了，谢谢"
-  print_en "  [音量-] : Continue with the script"
+  print_cn "- 请在 10 秒内按下音量键进行选择："
+  print_en "- Please press a volume key within 10s:"
+  ui_print " "
+  print_cn "  [音量+] : 是否选择加入MC生电交流群？"
+  print_en "  [音量+] : Join RustWorld QQ Group"
+  print_cn "  [音量-] : 不了谢谢"
+  print_en "  [音量-] : No,thanks"
+  ui_print " "
+  print_cn "  (逾时未选择将自动拒绝并继续)"
+  print_en "  (Auto-reject if no choice in 10s)"
   ui_print "***********************************************"
 
-  while true; do
-    local event=$(getevent -qlc 1)
-    if echo "$event" | grep -q "KEY_VOLUMEUP"; then
-      return 1
-    elif echo "$event" | grep -q "KEY_VOLUMEDOWN"; then
-      return 2
-    fi
-  done
+ local key_result=$(timeout 10 getevent -qlc 1 2>/dev/null)
+
+  if echo "$key_result" | grep -q "KEY_VOLUMEUP"; then
+    return 1 
+  elif echo "$key_result" | grep -q "KEY_VOLUMEDOWN"; then
+    return 2 
+  else
+    return 0 
+  fi
 }
 
 choose_logic
@@ -370,25 +375,30 @@ ACTION=$?
 
 if [ "$ACTION" -eq 1 ]; then
   ui_print "***********************************************"
-  print_cn "! 正在跳转至 RustWorld 服务器交流群..."
-  print_en "! Jumping to RustWorld Server Group..."
+  print_cn "! 正在尝试跳转至 RustWorld 交流群..."
+  print_en "! Attempting to open QQ group link..."
   
-  URL="https://qun.qq.com/universal-share/share?ac=1&authKey=PzIQnVRUd0IKXoZ2saueBhYo0XtLiEtZcZxVKUhQtMSlPlpBuOpOeAPlSdZvD6w4&busi_data=eyJncm91cENvZGUiOiIyMzgzMjA1NDgiLCJ0b2tlbiI6ImpiQ0FyaDA5TzJ2eXBmRkM5dWtmMHE5Uk1uODBjM0NYeFFsaTdOb2Q5Wkg3cGpIZVhRUjZtVWRyR05ITTlDNXoiLCJ1aW4iOiIzMTQzMTc1MTg3In0%3D&data=sSTrfVRTjnthkVIMQ76ol8Urrj-ZPT_-L4gl444IYnrsvtghI9NNJ6BPDUQ4mK3tVZv3bhT0WW3Kt8jWPI3bBg&svctype=4&tempid=h5_group_info"
+  GROUP_URL="https://qun.qq.com/universal-share/share?ac=1&authKey=PzIQnVRUd0IKXoZ2saueBhYo0XtLiEtZcZxVKUhQtMSlPlpBuOpOeAPlSdZvD6w4&busi_data=eyJncm91cENvZGUiOiIyMzgzMjA1NDgiLCJ0b2tlbiI6ImpiQ0FyaDA5TzJ2eXBmRkM5dWtmMHE5Uk1uODBjM0NYeFFsaTdOb2Q5Wkg3cGpIZVhRUjZtVWRyR05ITTlDNXoiLCJ1aW4iOiIzMTQzMTc1MTg3In0%3D&data=sSTrfVRTjnthkVIMQ76ol8Urrj-ZPT_-L4gl444IYnrsvtghI9NNJ6BPDUQ4mK3tVZv3bhT0WW3Kt8jWPI3bBg&svctype=4&tempid=h5_group_info"
   
-  am start -a android.intent.action.VIEW -d "$URL" >/dev/null 2>&1
+  am start -a android.intent.action.VIEW -d "$GROUP_URL" >/dev/null 2>&1
   
-  print_cn "! 跳转指令已发送，请在安装完成后查看手机。"
-  print_en "! Jump command sent. Please check after installation."
+  print_cn "! 跳转指令已发出，请在安装完成后查看手机。"
+  print_en "! Jump command sent. Please check after install."
   ui_print "***********************************************"
-  
+
 elif [ "$ACTION" -eq 2 ]; then
   ui_print "***********************************************"
-  print_cn "- 已选：不了，谢谢"
-  print_en "- Selected: Running subsequent code"
+  print_cn "- 已手动拒绝：结束安装"
+  print_en "- Manually rejected: Continuing script"
   ui_print "***********************************************"
-  
-fi
-##END##
 
+else
+  ui_print "***********************************************"
+  print_cn "- 选择超时：自动拒绝并继续安装"
+  print_en "- Timeout: Auto-rejected and continuing"
+  ui_print "***********************************************"
+fi
+
+##END##
 print_cn "- 安装完毕"
 print_en "- Install Done"

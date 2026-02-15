@@ -345,30 +345,49 @@ elif [ $APPDETECTED -eq 0 ]; then
   print_en "- No conflict software found"
 fi
 
+choose_logic() {
+  ui_print "***********************************************"
+  print_cn "- 正在等待按键选择..."
+  print_en "- Waiting for key press..."
+  print_cn "  [音量+] : 广告：是否加入我们新的MC生电服？"
+  print_en "  [音量+] : Join RustWorld QQ Group?"
+  print_cn "  [音量-] : 不了，谢谢"
+  print_en "  [音量-] : Continue with the script"
+  ui_print "***********************************************"
 
-ui_print "================================="
-ui_print " "
-ui_print "================================="
-ui_print "音量+ : 跳转加入"
-ui_print "音量- : 结束安装"
-ui_print "================================="
+  while true; do
+    local event=$(getevent -qlc 1)
+    if echo "$event" | grep -q "KEY_VOLUMEUP"; then
+      return 1
+    elif echo "$event" | grep -q "KEY_VOLUMEDOWN"; then
+      return 2
+    fi
+  done
+}
 
-chooseport
+choose_logic
+ACTION=$?
 
-if [ "$PORT" = "1" ]; then
-ui_print "- 你选择了 音量+"
-
-am start -a android.intent.action.VIEW -d "
-https://qun.qq.com/universal-share/share?ac=1&authKey=PzIQnVRUd0IKXoZ2saueBhYo0XtLiEtZcZxVKUhQtMSlPlpBuOpOeAPlSdZvD6w4&busi_data=eyJncm91cENvZGUiOiIyMzgzMjA1NDgiLCJ0b2tlbiI6ImpiQ0FyaDA5TzJ2eXBmRkM5dWtmMHE5Uk1uODBjM0NYeFFsaTdOb2Q5Wkg3cGpIZVhRUjZtVWRyR05ITTlDNXoiLCJ1aW4iOiIzMTQzMTc1MTg3In0%3D&data=sSTrfVRTjnthkVIMQ76ol8Urrj-ZPT_-L4gl444IYnrsvtghI9NNJ6BPDUQ4mK3tVZv3bhT0WW3Kt8jWPI3bBg&svctype=4&tempid=h5_group_info
-"
-
-ui_print "- 已尝试打开群链接"
-exit 0
+if [ "$ACTION" -eq 1 ]; then
+  ui_print "***********************************************"
+  print_cn "! 正在跳转至 RustWorld 服务器交流群..."
+  print_en "! Jumping to RustWorld Server Group..."
+  
+  URL="https://qun.qq.com/universal-share/share?ac=1&authKey=PzIQnVRUd0IKXoZ2saueBhYo0XtLiEtZcZxVKUhQtMSlPlpBuOpOeAPlSdZvD6w4&busi_data=eyJncm91cENvZGUiOiIyMzgzMjA1NDgiLCJ0b2tlbiI6ImpiQ0FyaDA5TzJ2eXBmRkM5dWtmMHE5Uk1uODBjM0NYeFFsaTdOb2Q5Wkg3cGpIZVhRUjZtVWRyR05ITTlDNXoiLCJ1aW4iOiIzMTQzMTc1MTg3In0%3D&data=sSTrfVRTjnthkVIMQ76ol8Urrj-ZPT_-L4gl444IYnrsvtghI9NNJ6BPDUQ4mK3tVZv3bhT0WW3Kt8jWPI3bBg&svctype=4&tempid=h5_group_info"
+  
+  am start -a android.intent.action.VIEW -d "$URL" >/dev/null 2>&1
+  
+  print_cn "! 跳转指令已发送，请在安装完成后查看手机。"
+  print_en "! Jump command sent. Please check after installation."
+  ui_print "***********************************************"
+  
+elif [ "$ACTION" -eq 2 ]; then
+  ui_print "***********************************************"
+  print_cn "- 已选：不了，谢谢"
+  print_en "- Selected: Running subsequent code"
+  ui_print "***********************************************"
+  
 fi
-
-if [ "$PORT" = "0" ]; then
-ui_print "- 你选择了 音量-"
-ui_print "- 结束安装"
 ##END##
 
 print_cn "- 安装完毕"
